@@ -29,13 +29,13 @@ function CommentForm (props) {
   });
 
   function submitComment () {
-    console.log({...formInput, timeStamp: props.timeStamp})
+    // console.log({...formInput, timeStamp: props.timeStamp})
 
-    // axios({
-    //   method: POST,
-    //   url: '/api/comments',
-    //   data: {...formInput, timeStamp: props.timeStamp}
-    // }).then(()=>console.log('submitted!'));
+    axios({
+      method: 'POST',
+      url: '/api/comments',
+      data: {...formInput, timeStamp: props.timeStamp}
+    }).then(()=>console.log('submitted!'));
   }
 
   return (
