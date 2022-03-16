@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState, useRef } from 'react';
 import axios from 'axios';
+// import utils from './components/utils.js';
 
 const projectName = "Song #2"
 
@@ -9,39 +10,52 @@ function App (props) {
   const [showForm, setShowForm] = useState(false);
   const [timeStamp, setTimeStamp] = useState(0);
   const [users, setUsers] = useState([ 'Brett', 'Jose', 'Mike', 'Doug' ]);
-  const [activeUser, setActiveUser] = useState('Doug');
+  const [activeUser, setActiveUser] = useState('Brett');
 
   return (
     <div>
       <div>DIFF_RNCE Audio Player 2</div>
       <div>{projectName}</div>
       <AudioPlayer setTimeStamp={(t)=>setTimeStamp(t)}/>
-
-      <select onChange={(e) => setActiveUser(e.target.value)}>Select User
-        {
-          users.map((u, i) => <option value={u}>{u}</option>)
-        }
-      </select>
-      <CommentForm timeStamp={timeStamp} activeUser={activeUser} />
+      <UserForm users={users} setActiveUser={setActiveUser} />
+      <CommentForm timeStamp={timeStamp} activeUser={activeUser} project={project} />
     </div>
   );
 }
 
 export default App;
 
+function UserForm (props) {
+  return (
+    <select onChange={(e) => props.setActiveUser(e.target.value)}>Select User
+      {
+        props.users.map((u, i) => <option key={`${u}${i}`} value={u}>{u}</option>)
+      }
+    </select>
+  );
+}
 
 function CommentForm (props) {
   const [formInput, setFormInput] = useState({
     body: '',
-    username: props.activeUser,
+    // username: props.activeUser,
   });
 
   function submitComment () {
+    const comment = {
+      project: props.project,
+      user: props.activeUser,
+      timeStamp: props.timeStamp,
+      body: formInput.body,
+      date: new Date(),
+      parent: null,
+      next: null,
+    }
 
     axios({
       method: 'POST',
       url: '/api/comments',
-      data: {...formInput, timeStamp: props.timeStamp}
+      data: { comment }
     }).then((e, r)=>console.log(r));
   }
 
@@ -67,7 +81,7 @@ function AudioPlayer (props) {
   const player = useRef();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [seekValue, setSeekValue] = useState(0);
+  // const [seekValue, setSeekValue] = useState(0);
 
   function playPause() {
     isPlaying ? player.current.pause() : player.current.play();
@@ -76,14 +90,20 @@ function AudioPlayer (props) {
 
   function timeStamp() {
     // console.log(player.current.currentTime);
-    props.setTimeStamp(player.current.currentTime);
+    let t = player.current.currentTime;
+    let m = Math.floor(t/60);
+    let s = Math.floor(t % 60);
+
+    let min = m >= 10 ? `${m}` : m > 0 ? `0${m}` : '00';
+    let sec = s >= 10 ? `${s}` : s > 0 ? `0${s}` : '00';
+    props.setTimeStamp(`${min}:${sec}`);
   }
 
   function onPlaying() {
     setCurrentTime(player.current.currentTime);
-    setSeekValue(
-      (player.current.currentTime / player.current.duration) * 100
-    );
+    // setSeekValue(
+    //   (player.current.currentTime / player.current.duration) * 100
+    // );
   }
 
   function skip(time) {

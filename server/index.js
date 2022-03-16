@@ -9,7 +9,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ extended: true }));
 
 app.post('/api/comments', (req, res) => {
-  res.send('thanks!');
+  console.log(req.body);
+  res.send('added!');
 });
 
 app.listen(PORT, () => {
