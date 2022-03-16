@@ -9,7 +9,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ extended: true }));
 
 app.post('/api/comments', (req, res) => {
-  console.log(req.body);
   res.send('thanks!');
 });
 

@@ -8,13 +8,21 @@ function App (props) {
   const [project, setProject] = useState(projectName)
   const [showForm, setShowForm] = useState(false);
   const [timeStamp, setTimeStamp] = useState(0);
+  const [users, setUsers] = useState([ 'Brett', 'Jose', 'Mike', 'Doug' ]);
+  const [activeUser, setActiveUser] = useState('Doug');
 
   return (
     <div>
-      <div>DIFF_RNCE Audio Player</div>
+      <div>DIFF_RNCE Audio Player 2</div>
       <div>{projectName}</div>
       <AudioPlayer setTimeStamp={(t)=>setTimeStamp(t)}/>
-      <CommentForm timeStamp={timeStamp} />
+
+      <select onChange={(e) => setActiveUser(e.target.value)}>Select User
+        {
+          users.map((u, i) => <option value={u}>{u}</option>)
+        }
+      </select>
+      <CommentForm timeStamp={timeStamp} activeUser={activeUser} />
     </div>
   );
 }
@@ -25,17 +33,16 @@ export default App;
 function CommentForm (props) {
   const [formInput, setFormInput] = useState({
     body: '',
-    username: '',
+    username: props.activeUser,
   });
 
   function submitComment () {
-    // console.log({...formInput, timeStamp: props.timeStamp})
 
     axios({
       method: 'POST',
       url: '/api/comments',
       data: {...formInput, timeStamp: props.timeStamp}
-    }).then(()=>console.log('submitted!'));
+    }).then((e, r)=>console.log(r));
   }
 
   return (
@@ -68,7 +75,7 @@ function AudioPlayer (props) {
   }
 
   function timeStamp() {
-    console.log(player.current.currentTime);
+    // console.log(player.current.currentTime);
     props.setTimeStamp(player.current.currentTime);
   }
 
