@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState, useRef } from 'react';
 import axios from 'axios';
+import style from './App.module.css';
 // import utils from './components/utils.js';
 
 const projectName = "Song #2"
@@ -13,12 +14,15 @@ function App (props) {
   const [activeUser, setActiveUser] = useState('Brett');
 
   return (
-    <div>
-      <div>DIFF_RNCE Audio Player 2</div>
-      <div>{projectName}</div>
-      <AudioPlayer setTimeStamp={(t)=>setTimeStamp(t)}/>
-      <UserForm users={users} setActiveUser={setActiveUser} />
-      <CommentForm timeStamp={timeStamp} activeUser={activeUser} project={project} />
+    <div className={style.App}>
+      <div className={style.title}>DIFF_RNCE</div>
+      <div className={style.projectName}>{projectName}</div>
+      <AudioPlayer
+        setTimeStamp={(t)=>setTimeStamp(t)}/>
+      <UserForm
+        users={users} setActiveUser={setActiveUser} />
+      <CommentForm
+        timeStamp={timeStamp} activeUser={activeUser} project={project} />
     </div>
   );
 }
@@ -27,7 +31,10 @@ export default App;
 
 function UserForm (props) {
   return (
-    <select onChange={(e) => props.setActiveUser(e.target.value)}>Select User
+    <select
+      className={style.userForm}
+      onChange={(e) => props.setActiveUser(e.target.value)}
+    >Select User
       {
         props.users.map((u, i) => <option key={`${u}${i}`} value={u}>{u}</option>)
       }
@@ -60,7 +67,7 @@ function CommentForm (props) {
   }
 
   return (
-    <div  >
+    <div className={style.commentForm}>
       <input
         type="text"
         placeholder="comment"
@@ -68,6 +75,7 @@ function CommentForm (props) {
       />
       <p>{props.timeStamp}</p>
       <button
+        className={style.button}
         type="button"
         onClick={submitComment}
       >add comment</button>
@@ -76,6 +84,12 @@ function CommentForm (props) {
 }
 
 function AudioPlayer (props) {
+
+  const songs = [
+    {title: 'Song 1', url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'},
+    {title: 'Song 2', url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'},
+    {title: 'Song 3', url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'},
+  ]
 
   const skipIncrement = 5;
   const player = useRef();
@@ -115,7 +129,7 @@ function AudioPlayer (props) {
   return (
     <div>
       <audio
-        src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+        src={songs[0].url}
         ref={player}
         onTimeUpdate={onPlaying}
       >
@@ -123,11 +137,11 @@ function AudioPlayer (props) {
       {/* <br />
       <p>{currentTime}</p>
       <br /> */}
-      <div>
-        <button type="button" onClick={()=>skip(-1 * skipIncrement)}> {`<< ${skipIncrement}`} </button>
-        <button type="button" onClick={playPause}> { !isPlaying ? 'play' : 'pause' } </button>
-        <button type="button" onClick={timeStamp}>get</button>
-        <button type="button" onClick={()=>skip(skipIncrement)}> {`${skipIncrement} >>`} </button>
+      <div className={style.audioPlayer}>
+        <button className={style.button}  type="button" onClick={()=>skip(-1 * skipIncrement)}> {`<< ${skipIncrement}`} </button>
+        <button className={style.button}  type="button" onClick={playPause}> { !isPlaying ? 'play' : 'pause' } </button>
+        <button className={style.button} type="button" onClick={timeStamp}>get</button>
+        <button className={style.button}  type="button" onClick={()=>skip(skipIncrement)}> {`${skipIncrement} >>`} </button>
       </div>
     </div>
   )
