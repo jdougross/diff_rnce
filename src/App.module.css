@@ -26,6 +26,19 @@
 .commentForm {
   background-color: lightcoral;
 }
+.comment {
+  width: 100%;
+  display: grid;
+  grid-template-areas:
+    "time   x     resolve "
+    "x      body  x       "
+    "x      x     data    ";
+  background-color: lightgray;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+}
 .button {
   background-color: transparent;
   border: 1px solid black;

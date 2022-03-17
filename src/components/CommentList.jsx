@@ -16,10 +16,31 @@ function CommentList (props) {
 }
 
 function Comment (props) {
-  const { user, body, song_time, resolved } = props.comment;
+  const [resolved, setResolved] = useState(props.comment.resolved);
+  const { user, body, song_time, _id } = props.comment;
+
+  function resolveButton() {
+    // setResolved(!resolved);
+    axios({
+      method: 'PUT',
+      url: '/api/comments',
+      params: {
+        _id: _id,
+        resolved: !resolved
+      }
+    })
+    .then((r) => setResolved(r.data.resolved));
+  }
+
   return (
-    <div id={`${props.index}${user}`}>
+    <div
+      className={style.comment}
+      id={`${props.index}${user}`}>
       <div>{song_time}</div>
+      <button
+        onClick={resolveButton}
+        >{resolved ? 'resolved' : 'needs attention'}</button>
+
       <div>{body}</div>
       <div>{user}</div>
     </div>

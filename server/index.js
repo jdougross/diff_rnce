@@ -24,6 +24,13 @@ app.get('/api/comments', (req, res) => {
     e ? res.send(e) : res.send(null, q));
 });
 
+app.put('/api/comments', (req, res) => {
+  const { _id, resolved } = req.query;
+  Comment.findByIdAndUpdate(_id, { resolved }, { new: true })
+    .then((e, q) =>
+    e ? res.send(e) : res.send(null, q));
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`);
 });
