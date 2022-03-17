@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import style from './App.module.css';
 // import utils from './components/utils.js';
@@ -12,6 +12,16 @@ function App (props) {
   const [timeStamp, setTimeStamp] = useState(0);
   const [users, setUsers] = useState([ 'Brett', 'Jose', 'Mike', 'Doug' ]);
   const [activeUser, setActiveUser] = useState('Brett');
+  const [comments, setComments] = useState();
+
+  function getAllComments() {
+    axios({
+      method: 'GET',
+      url: '/api/comments'
+    }).then((queryResp) => setComments(queryResp.data));
+  }
+
+  useEffect(getAllComments, []);
 
   return (
     <div className={style.App}>
@@ -23,14 +33,42 @@ function App (props) {
         users={users} setActiveUser={setActiveUser} />
       <CommentForm
         timeStamp={timeStamp} activeUser={activeUser} project={project} />
+      <CommentList comments={comments}/>
     </div>
   );
 }
 
 export default App;
 
+function CommentList (props) {
+  // if(!props.comments){return <div></div>}
+  // console.log(props.comments);
+  // return <div></div>
+  return (
+    <div>
+      {
+        props.comments?.map((c, i) =>
+          // <div>{c.body}</div>
+          <Comment comment={c} index={i}/>
+          )
+      }
+    </div>
+  )
+}
+
+function Comment (props) {
+  const { user, body, timeStamp, resolved } = props.comment;
+  return (
+    <div id={`${props.index}${user}`}>
+      <div>{body}</div>
+      <div>{user}</div>
+    </div>
+  )
+}
+
 function UserForm (props) {
   return (
+    //select value={activeUser} ?
     <select
       className={style.userForm}
       onChange={(e) => props.setActiveUser(e.target.value)}
@@ -50,19 +88,19 @@ function CommentForm (props) {
 
   function submitComment () {
     const comment = {
-      project: props.project,
+      // project: props.project,
       user: props.activeUser,
       timeStamp: props.timeStamp,
       body: formInput.body,
-      date: new Date(),
-      parent: null,
-      next: null,
+      // date: new Date(),
+      // parent: null,
+      // next: null,
     }
-
+    console.log(comment);
     axios({
       method: 'POST',
       url: '/api/comments',
-      data: { comment }
+      data: comment
     }).then((e, r)=>console.log(r));
   }
 
