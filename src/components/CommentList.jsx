@@ -5,10 +5,25 @@ import style from '../App.module.css';
 
 
 function CommentList (props) {
+  const [showResolved, setShowResolved] = useState(true);
+  const comments = showResolved ?
+    props.comments :
+    props.comments.filter((c) => !c.resolved);
+
+  function showHideResolved () {
+    setShowResolved(!showResolved);
+  }
+
   return (
     <div>
+      <button
+        className={style.button}
+        onClick={showHideResolved}
+        >{showResolved ? 'hide resolved' : 'show resolved' }
+      </button>
+
       {
-        props.comments?.map((c, i) =>
+        comments?.map((c, i) =>
           <Comment comment={c} index={i}/> )
       }
     </div>
@@ -34,15 +49,30 @@ function Comment (props) {
 
   return (
     <div
-      className={style.comment}
+      className={`${style.comment} ${
+        resolved ?
+        style.comment_resolved : style.comment_unresolved}`
+      }
       id={`${props.index}${user}`}>
-      <div>{song_time}</div>
+
+      <div
+        className={style.comment_songTime}
+        >{song_time}
+      </div>
       <button
+        className={
+          `${style.button} ${style.comment_resolveButton}`}
         onClick={resolveButton}
         >{resolved ? 'resolved' : 'needs attention'}</button>
 
-      <div>{body}</div>
-      <div>{user}</div>
+      <div
+        className={style.comment_body}
+        >{body}
+      </div>
+      <div
+        className={style.comment_user}
+        >{user}
+      </div>
     </div>
   )
 }

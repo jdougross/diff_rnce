@@ -27,17 +27,40 @@
   background-color: lightcoral;
 }
 .comment {
-  width: 100%;
+  width: 60%;
   display: grid;
   grid-template-areas:
-    "time   x     resolve "
-    "x      body  x       "
-    "x      x     data    ";
+    "time   .     resolve "
+    ".      body  .       "
+    ".      .     data    ";
+  grid-template-rows: 1fr 5fr 1fr;
+  grid-template-columns: 1fr 2fr 1fr;
   background-color: lightgray;
   border: 1px solid black;
   border-radius: 5px;
   padding: 5px;
-  margin: 5px;
+  margin: auto;
+  margin-top: 10px;
+}
+.comment_resolved {
+  color: gray;
+}
+.comment_unresolved {
+  color: black;
+}
+.comment_songTime {
+  grid-area:time;
+}
+.comment_resolveButton {
+  grid-area:resolve;
+}
+.comment_body {
+  grid-area:body;
+  inline-size: 80%%;
+  overflow:wrap;
+}
+.comment_user {
+  grid-area:data;
 }
 .button {
   background-color: transparent;
