@@ -4,6 +4,11 @@ import axios from 'axios';
 import style from './App.module.css';
 // import utils from './components/utils.js';
 
+import AudioPlayer from './components/AudioPlayer.jsx';
+import CommentList from './components/CommentList.jsx';
+import CommentForm from './components/CommentForm.jsx';
+import UserForm from './components/UserForm.jsx';
+
 const projectName = "Song #2"
 
 function App (props) {
@@ -30,9 +35,13 @@ function App (props) {
       <AudioPlayer
         setTimeStamp={(t)=>setTimeStamp(t)}/>
       <UserForm
-        users={users} setActiveUser={setActiveUser} />
+        users={users}
+        setActiveUser={setActiveUser} />
       <CommentForm
-        timeStamp={timeStamp} activeUser={activeUser} project={project} />
+        timeStamp={timeStamp}
+        activeUser={activeUser}
+        project={project}
+        getAllComments={getAllComments} />
       <CommentList comments={comments}/>
     </div>
   );
@@ -40,147 +49,9 @@ function App (props) {
 
 export default App;
 
-function CommentList (props) {
-  // if(!props.comments){return <div></div>}
-  // console.log(props.comments);
-  // return <div></div>
-  return (
-    <div>
-      {
-        props.comments?.map((c, i) =>
-          // <div>{c.body}</div>
-          <Comment comment={c} index={i}/>
-          )
-      }
-    </div>
-  )
-}
 
-function Comment (props) {
-  const { user, body, timeStamp, resolved } = props.comment;
-  return (
-    <div id={`${props.index}${user}`}>
-      <div>{body}</div>
-      <div>{user}</div>
-    </div>
-  )
-}
 
-function UserForm (props) {
-  return (
-    //select value={activeUser} ?
-    <select
-      className={style.userForm}
-      onChange={(e) => props.setActiveUser(e.target.value)}
-    >Select User
-      {
-        props.users.map((u, i) => <option key={`${u}${i}`} value={u}>{u}</option>)
-      }
-    </select>
-  );
-}
 
-function CommentForm (props) {
-  const [formInput, setFormInput] = useState({
-    body: '',
-    // username: props.activeUser,
-  });
 
-  function submitComment () {
-    const comment = {
-      // project: props.project,
-      user: props.activeUser,
-      timeStamp: props.timeStamp,
-      body: formInput.body,
-      // date: new Date(),
-      // parent: null,
-      // next: null,
-    }
-    console.log(comment);
-    axios({
-      method: 'POST',
-      url: '/api/comments',
-      data: comment
-    }).then((e, r)=>console.log(r));
-  }
 
-  return (
-    <div className={style.commentForm}>
-      <input
-        type="text"
-        placeholder="comment"
-        onChange={(e)=>setFormInput({...formInput, body: e.target.value})}
-      />
-      <p>{props.timeStamp}</p>
-      <button
-        className={style.button}
-        type="button"
-        onClick={submitComment}
-      >add comment</button>
-    </div>
-  );
-}
 
-function AudioPlayer (props) {
-
-  const songs = [
-    {title: 'Song 1', url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'},
-    {title: 'Song 2', url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'},
-    {title: 'Song 3', url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'},
-  ]
-
-  const skipIncrement = 5;
-  const player = useRef();
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  // const [seekValue, setSeekValue] = useState(0);
-
-  function playPause() {
-    isPlaying ? player.current.pause() : player.current.play();
-    setIsPlaying(!isPlaying);
-  }
-
-  function timeStamp() {
-    // console.log(player.current.currentTime);
-    let t = player.current.currentTime;
-    let m = Math.floor(t/60);
-    let s = Math.floor(t % 60);
-
-    let min = m >= 10 ? `${m}` : m > 0 ? `0${m}` : '00';
-    let sec = s >= 10 ? `${s}` : s > 0 ? `0${s}` : '00';
-    props.setTimeStamp(`${min}:${sec}`);
-  }
-
-  function onPlaying() {
-    setCurrentTime(player.current.currentTime);
-    // setSeekValue(
-    //   (player.current.currentTime / player.current.duration) * 100
-    // );
-  }
-
-  function skip(time) {
-    let newTime = player.current.currentTime + time;
-    player.current.currentTime = newTime;
-    setCurrentTime(newTime);
-  }
-
-  return (
-    <div>
-      <audio
-        src={songs[0].url}
-        ref={player}
-        onTimeUpdate={onPlaying}
-      >
-      </audio>
-      {/* <br />
-      <p>{currentTime}</p>
-      <br /> */}
-      <div className={style.audioPlayer}>
-        <button className={style.button}  type="button" onClick={()=>skip(-1 * skipIncrement)}> {`<< ${skipIncrement}`} </button>
-        <button className={style.button}  type="button" onClick={playPause}> { !isPlaying ? 'play' : 'pause' } </button>
-        <button className={style.button} type="button" onClick={timeStamp}>get</button>
-        <button className={style.button}  type="button" onClick={()=>skip(skipIncrement)}> {`${skipIncrement} >>`} </button>
-      </div>
-    </div>
-  )
-}

@@ -12,15 +12,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ extended: true }));
 
 app.post('/api/comments', (req, res) => {
-  // res.send(req.body);
-  Comment.create(req.body).then((e, q) =>
-    e ? res.send(e) : res.send(null, q));
-
+  Comment.create(req.body)
+    .then((e, q) =>
+      e ? res.send(e) : res.send(null, q));
 });
 
 app.get('/api/comments', (req, res) => {
-  // console.log(req.body);
-  Comment.find({}).then((q)=>res.send(q));
+  Comment.find({})
+    .sort({ updatedAt: 'desc' })
+    .then((e, q) =>
+    e ? res.send(e) : res.send(null, q));
 });
 
 app.listen(PORT, () => {
